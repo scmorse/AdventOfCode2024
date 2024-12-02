@@ -1,30 +1,37 @@
 package day2
 
+import consecutivePairs
 import second
+import java.io.File
 
 fun main() {
+  val input = readInput()
+
   // Part 1
   val numSafeForPart1 = input.count { row -> row.isSafeForPart1() }
-  println("Safe for part 1: $numSafeForPart1")
+  println("Safe for part 1: $numSafeForPart1") // 479
 
   // Part 2
   val numSafeForPart2 = input.count { row -> row.isSafeForPart2() }
-  println("Safe for part 2: $numSafeForPart2")
+  println("Safe for part 2: $numSafeForPart2") // 531
 }
 
-fun List<Int>.isSafeForPart2(): Boolean {
+fun List<Long>.isSafeForPart2(): Boolean {
   return indices
-    .map { iToOmit -> filterIndexed { i, _ -> i != iToOmit} }
+    .map { iToOmit -> filterIndexed { i, _ -> i != iToOmit } }
     .any { it.isSafeForPart1() }
 }
 
-fun List<Int>.isSafeForPart1(): Boolean =
+fun List<Long>.isSafeForPart1(): Boolean =
   if (first() < second()) {
     consecutivePairs().all { it.second - it.first in 1..3 }
   } else {
     consecutivePairs().all { it.first - it.second in 1..3 }
   }
 
-fun <T> List<T>.consecutivePairs(): Sequence<Pair<T, T>> = sequence {
-  for (i in indices.drop(1)) yield(get(i - 1) to get(i))
+private fun readInput(): List<List<Long>> {
+  return File("src/main/kotlin/day2/input.txt").readLines()
+    .map { line ->
+      line.split(" ").map { it.toLong() }
+    }
 }

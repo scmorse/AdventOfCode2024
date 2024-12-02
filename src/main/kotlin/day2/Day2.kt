@@ -1,6 +1,5 @@
 package day2
 
-import consecutivePairs
 import second
 import java.io.File
 
@@ -24,9 +23,9 @@ fun List<Long>.isSafeForPart2(): Boolean {
 
 fun List<Long>.isSafeForPart1(): Boolean =
   if (first() < second()) {
-    consecutivePairs().all { it.second - it.first in 1..3 }
+    zipWithNext().all { it.second - it.first in 1..3 }
   } else {
-    consecutivePairs().all { it.first - it.second in 1..3 }
+    zipWithNext().all { it.first - it.second in 1..3 }
   }
 
 private fun readInput(): List<List<Long>> {

@@ -4,6 +4,7 @@ import second
 import java.io.File
 import kotlin.math.abs
 
+// https://adventofcode.com/2024/day/1
 fun main() {
   val (list1: List<Long>, list2: List<Long>) = readInput()
 

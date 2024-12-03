@@ -9,11 +9,13 @@ fun main() {
 
   // Part 1
   val numSafeForPart1 = input.count { row -> row.isSafeForPart1() }
-  println("Safe for part 1: $numSafeForPart1") // 479
+  println("Safe for part 1: $numSafeForPart1")
+  check(numSafeForPart1 == 479)
 
   // Part 2
   val numSafeForPart2 = input.count { row -> row.isSafeForPart2() }
-  println("Safe for part 2: $numSafeForPart2") // 531
+  println("Safe for part 2: $numSafeForPart2")
+  check(numSafeForPart2 == 531)
 }
 
 fun List<Long>.isSafeForPart2(): Boolean {

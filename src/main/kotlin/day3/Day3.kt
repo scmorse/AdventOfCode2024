@@ -18,7 +18,9 @@ fun main() {
         range = matchResult.range,
       )
     }
-  println("Part 1 sum of products: ${mulCommands.sumOf { it.product }}") // 167650499
+  val sumOfProducts = mulCommands.sumOf { it.product }
+  println("Part 1 sum of products: $sumOfProducts")
+  check(sumOfProducts == 167650499L)
 
   // Part 2
   val enableMulCommands = enableMulRegex.findAll(input).map { EnableMulCommand(range = it.range) }
@@ -35,7 +37,8 @@ fun main() {
     }
     0L
   }
-  println("Part 2 sum of enabled products: $sumOfEnabledProducts") // 95846796
+  println("Part 2 sum of enabled products: $sumOfEnabledProducts")
+  check(sumOfEnabledProducts == 95846796L)
 }
 
 

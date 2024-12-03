@@ -11,12 +11,14 @@ fun main() {
   // Part 1
   val distance = list1.sorted().zip(list2.sorted())
     .sumOf { abs(it.first - it.second) }
-  println("Part 1 distance: $distance") // 1388114
+  println("Part 1 distance: $distance")
+  check(distance == 1388114L)
 
   // Part 2
   val counts = list2.groupingBy { it }.eachCount()
   val similarity = list1.sumOf { it * (counts[it] ?: 0) }
-  println("Part 2 similarity: $similarity") // 23529853
+  println("Part 2 similarity: $similarity")
+  check(similarity == 23529853L)
 }
 
 private fun readInput(): Pair<List<Long>, List<Long>> {

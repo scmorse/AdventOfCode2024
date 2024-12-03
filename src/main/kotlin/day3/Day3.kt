@@ -2,9 +2,9 @@ package day3
 
 import java.io.File
 
-private val mulRegex = Regex("mul\\((\\d{1,3}),(\\d{1,3})\\)")
-private val enableMulRegex = Regex("do\\(\\)")
-private val disableMulRegex = Regex("don't\\(\\)")
+private val mulRegex = Regex("""mul\((?<arg1>\d{1,3}),(?<arg2>\d{1,3})\)""")
+private val enableMulRegex = Regex("""do\(\)""")
+private val disableMulRegex = Regex("""don't\(\)""")
 
 // https://adventofcode.com/2024/day/3
 fun main() {
@@ -14,7 +14,7 @@ fun main() {
   val mulCommands: Sequence<MulCommand> = mulRegex.findAll(input)
     .map { matchResult ->
       MulCommand(
-        product = matchResult.groupValues[1].toLong() * matchResult.groupValues[2].toLong(),
+        product = matchResult.groups["arg1"]!!.value.toLong() * matchResult.groups["arg2"]!!.value.toLong(),
         range = matchResult.range,
       )
     }
@@ -25,7 +25,6 @@ fun main() {
   val disableMulCommands = disableMulRegex.findAll(input).map { DisableMulCommand(range = it.range) }
   val commands: Sequence<RecognizedCommand> = (mulCommands + enableMulCommands + disableMulCommands)
     .sortedBy { it.range.first }
-
 
   var enabled = true
   val sumOfEnabledProducts = commands.sumOf { command ->

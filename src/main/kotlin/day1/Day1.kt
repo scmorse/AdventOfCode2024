@@ -1,6 +1,5 @@
 package day1
 
-import second
 import java.io.File
 import kotlin.math.abs
 
@@ -25,7 +24,7 @@ private fun readInput(): Pair<List<Long>, List<Long>> {
   return File("src/main/kotlin/day1/input.txt").readLines()
     .map { line ->
       val parts = line.split("   ").apply { require(size == 2) }
-      parts.first().toLong() to parts.second().toLong()
+      parts.first().toLong() to parts.last().toLong()
     }
     .unzip()
 }

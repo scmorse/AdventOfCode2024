@@ -1,6 +1,5 @@
 package day2
 
-import second
 import java.io.File
 
 // https://adventofcode.com/2024/day/2
@@ -25,7 +24,7 @@ fun List<Long>.isSafeForPart2(): Boolean {
 }
 
 fun List<Long>.isSafeForPart1(): Boolean =
-  if (first() < second()) {
+  if (first() < last()) {
     zipWithNext().all { it.second - it.first in 1..3 }
   } else {
     zipWithNext().all { it.first - it.second in 1..3 }

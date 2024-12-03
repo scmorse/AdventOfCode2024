@@ -3,8 +3,9 @@ package day2
 import second
 import java.io.File
 
+// https://adventofcode.com/2024/day/2
 fun main() {
-  val input = readInput()
+  val input: List<List<Long>> = readInput()
 
   // Part 1
   val numSafeForPart1 = input.count { row -> row.isSafeForPart1() }

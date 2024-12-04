@@ -2,14 +2,6 @@ package day4
 
 import java.io.File
 
-private val SEARCH_DIRECTIONS = listOf(
-  Coordinate(-1, -1), Coordinate(-1, 0), Coordinate(-1, 1),
-  Coordinate(0, -1), /* Coordinate(0, 0) */ Coordinate(0, 1),
-  Coordinate(1, -1), Coordinate(1, 0), Coordinate(1, 1),
-)
-
-data class Coordinate(val x: Int, val y: Int)
-
 // https://adventofcode.com/2024/day/4
 fun main() {
   val input: List<String> = readInput()
@@ -20,10 +12,10 @@ fun main() {
     for ((offset, char) in line.withIndex()) {
       if (char != 'X') continue
       val start = Coordinate(x = offset, y = lineNumber)
-      for (searchDirection in SEARCH_DIRECTIONS) {
-        if (input.getAt(start + searchDirection * 1) != 'M') continue
-        if (input.getAt(start + searchDirection * 2) != 'A') continue
-        if (input.getAt(start + searchDirection * 3) != 'S') continue
+      for (direction in Direction.entries) {
+        if (input[start + direction * 1] != 'M') continue
+        if (input[start + direction * 2] != 'A') continue
+        if (input[start + direction * 3] != 'S') continue
         countOfXMAS++
       }
     }
@@ -37,8 +29,8 @@ fun main() {
     for ((offset, char) in line.withIndex()) {
       if (char != 'A') continue
       val middle = Coordinate(x = offset, y = lineNumber)
-      if (input.getAdjacentCharsOnAxis(middle, axisX = 1, axisY = 1) != setOf('M', 'S')) continue
-      if (input.getAdjacentCharsOnAxis(middle, axisX = 1, axisY = -1) != setOf('M', 'S')) continue
+      if (input.getAdjacentCharsOnAxis(middle, Direction.NE) != setOf('M', 'S')) continue
+      if (input.getAdjacentCharsOnAxis(middle, Direction.NW) != setOf('M', 'S')) continue
       countOfXShapedMAS++
     }
   }
@@ -46,21 +38,29 @@ fun main() {
   check(countOfXShapedMAS == 1933)
 }
 
-private fun List<String>.getAdjacentCharsOnAxis(start: Coordinate, axisX: Int, axisY: Int): Set<Char> =
-  setOfNotNull(
-    this.getAt(Coordinate(x = start.x + axisX, y = start.y + axisY)),
-    this.getAt(Coordinate(x = start.x + axisX * -1, y = start.y + axisY * -1)),
-  )
+data class Coordinate(val x: Int, val y: Int)
 
-private operator fun Coordinate.times(other: Int) = Coordinate(x = x * other, y = y * other)
+enum class Direction(val x: Int, val y: Int) {
+  NW(x = -1, y = 1), N(x = 0, y = 1), NE(x = 1, y = 1),
+  W(x = -1, y = 0), E(x = 1, y = 0),
+  SW(x = -1, y = -1), S(x = 0, y = -1), SE(x = 1, y = -1),
+}
 
-private operator fun Coordinate.plus(other: Coordinate) = Coordinate(x = x + other.x, y = y + other.y)
+data class Vector(val direction: Direction, val magnitude: Int) {
+  val x: Int get() = magnitude * direction.x
+  val y: Int get() = magnitude * direction.y
+}
 
-private fun List<String>.getAt(coordinate: Coordinate): Char? {
+private operator fun List<String>.get(coordinate: Coordinate): Char? {
   val line = this.getOrNull(coordinate.y) ?: return null
   return line.getOrNull(coordinate.x)
 }
 
+private fun List<String>.getAdjacentCharsOnAxis(middle: Coordinate, direction: Direction): Set<Char> =
+  setOfNotNull(this[middle + direction * 1], this[middle + direction * -1])
+
+private operator fun Direction.times(steps: Int) = Vector(direction = this, magnitude = steps)
+private operator fun Coordinate.plus(vector: Vector) = Coordinate(x = x + vector.x, y = y + vector.y)
 
 private fun readInput(): List<String> {
   return File("src/main/kotlin/day4/input.txt").readLines()

@@ -1,47 +1,22 @@
 package day5
 
 import java.io.File
-import java.util.*
-import kotlin.time.measureTime
 
 fun main() {
   val (rules: Set<Rule>, manuals: List<Manual>) = readInput()
 
   // Part 1
   val (validManuals, invalidManuals) = manuals.partition { manual -> !manual.breaksAnyRule(rules) }
-  val sumOfMidpointsOfValidManuals = validManuals.sumOf { manual -> manual[manual.size / 2].toLong() }
+  val sumOfMidpointsOfValidManuals = validManuals.sumOf { manual -> manual.midpoint() }
   println("Part 1 sum of midpoints of valid manuals: $sumOfMidpointsOfValidManuals")
   check(sumOfMidpointsOfValidManuals == 4790L)
 
   // Part 2
   val sumOfMidpointsOfInvalidManuals = invalidManuals.sumOf { manual ->
-    PriorityQueue(manual.size, rules.toComparator())
-      .apply { addAll(manual) }
-      .nth((manual.size + 1) / 2).toLong()
+    manual.sortedWith(rules.toComparator()).midpoint()
   }
   println("Part 2 sum of midpoints of invalid manuals: $sumOfMidpointsOfInvalidManuals")
   check(sumOfMidpointsOfInvalidManuals == 6319L)
-
-  // Speed comparison
-  val priorityQueueMethodTime = measureTime {
-    repeat(300_000) {
-      invalidManuals.sumOf { manual ->
-        PriorityQueue(manual.size, rules.toComparator())
-          .apply { addAll(manual) }
-          .nth((manual.size + 1) / 2).toLong()
-      }
-    }
-  }
-  println("Time for priority queue method: $priorityQueueMethodTime")
-
-  val fullSortMethod = measureTime {
-    repeat(300_000) {
-      invalidManuals.sumOf { manual ->
-        manual.sortedWith(rules.toComparator())[manual.size / 2].toLong()
-      }
-    }
-  }
-  println("Time for full sort method: $fullSortMethod")
 }
 
 data class Rule(val before: String, val after: String)
@@ -63,10 +38,7 @@ fun Set<Rule>.toComparator(): Comparator<String> =
     else 0
   }
 
-fun <T> PriorityQueue<T>.nth(n: Int): T {
-  repeat(n - 1) { remove() }
-  return remove()
-}
+fun Manual.midpoint(): Long = this[size / 2].toLong()
 
 private fun readInput(): Pair<Set<Rule>, List<Manual>> {
   val rules = mutableSetOf<Rule>()

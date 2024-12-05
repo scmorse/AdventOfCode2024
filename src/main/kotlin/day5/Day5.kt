@@ -23,9 +23,9 @@ data class Rule(val before: String, val after: String)
 typealias Manual = List<String>
 
 fun Manual.breaksAnyRule(rules: Set<Rule>): Boolean {
-  for ((i, manual1) in withIndex()) {
-    for (manual2 in slice((i + 1)..lastIndex)) {
-      if (rules.contains(Rule(before = manual2, after = manual1))) return true
+  for ((i, manualBefore) in withIndex()) {
+    for (manualAfter in slice((i + 1)..lastIndex)) {
+      if (rules.contains(Rule(before = manualAfter, after = manualBefore))) return true
     }
   }
   return false

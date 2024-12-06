@@ -3,21 +3,26 @@ package day6
 import java.io.File
 
 fun main() {
-  val (start: Coordinate, grid: Grid) = readInput()
+  val (originalStart: Coordinate, grid: Grid) = readInput()
 
   // Part 1
-  val traveledLocations = grid.getGuardPath(start, Direction.N).filterNotNull().distinctBy { it }
-  println("Part 1 visited ${traveledLocations.size} positions")
-  check(traveledLocations.size == 4819)
+  val traveledPath: List<Pair<Coordinate, Direction>> = grid.getGuardPath(originalStart to Direction.N).filterNotNull()
+  val uniqueCoordinatesInPath = traveledPath.map { (coordinate, _) -> coordinate }.distinct()
+  println("Part 1 visited ${uniqueCoordinatesInPath.size} positions")
+  check(uniqueCoordinatesInPath.size == 4819)
 
   // Part 2
-  val numObstaclesThatForceGuardIntoLoop = (traveledLocations - start)
-    .sumOf { newObstacleCoordinate ->
-      val path = grid.withObstacleAt(newObstacleCoordinate).getGuardPath(start, Direction.N)
+  val numObstaclesThatForceGuardIntoLoopNew = traveledPath
+    .zipWithNext { startCoordinateAndDirection, newObstacleCoordinateAndDirection ->
+      startCoordinateAndDirection to newObstacleCoordinateAndDirection.first
+    }
+    .distinctBy { (_, newObstacleCoordinate) -> newObstacleCoordinate }
+    .sumOf { (startCoordinateAndDirection, newObstacleCoordinate) ->
+      val path = grid.copyWithObstacleAt(newObstacleCoordinate).getGuardPath(startCoordinateAndDirection)
       if (path.last() != null) 1L else 0L
     }
-  println("Part 2 num obstacles that could force guard into loop: $numObstaclesThatForceGuardIntoLoop")
-  check(numObstaclesThatForceGuardIntoLoop == 1796L)
+  println("Part 2 num obstacles that could force guard into loop: $numObstaclesThatForceGuardIntoLoopNew")
+  check(numObstaclesThatForceGuardIntoLoopNew == 1796L)
 }
 
 data class Coordinate(val x: Int, val y: Int)
@@ -43,9 +48,10 @@ class Grid(private val input: List<String>) {
     return line.getOrNull(coordinate.x)
   }
 
-  fun getGuardPath(startLocation: Coordinate, startDirection: Direction): List<Coordinate?> {
-    val traveled = mutableListOf<Coordinate?>(startLocation)
-    val traveledWithDirection = mutableSetOf(Pair(startLocation, startDirection))
+  fun getGuardPath(start: Pair<Coordinate, Direction>): List<Pair<Coordinate, Direction>?> {
+    val (startLocation: Coordinate, startDirection: Direction) = start
+    val traveled = mutableListOf<Pair<Coordinate, Direction>?>(Pair(startLocation, startDirection))
+    val traveledSet = mutableSetOf(Pair(startLocation, startDirection))
     var location = startLocation
     var direction = startDirection
     while (true) {
@@ -57,12 +63,12 @@ class Grid(private val input: List<String>) {
         }
         else -> {
           location += direction
-          traveled.add(location)
           val locationAndDirection = Pair(location, direction)
-          if (locationAndDirection in traveledWithDirection) {
+          traveled.add(locationAndDirection)
+          if (locationAndDirection in traveledSet) {
             return traveled // loop
           } else {
-            traveledWithDirection.add(locationAndDirection)
+            traveledSet.add(locationAndDirection)
           }
         }
       }
@@ -70,7 +76,7 @@ class Grid(private val input: List<String>) {
     return traveled
   }
 
-  fun withObstacleAt(coordinate: Coordinate): Grid {
+  fun copyWithObstacleAt(coordinate: Coordinate): Grid {
     check(this[coordinate] == '.')
     return Grid(
       input.mapIndexed { lineNumber, line ->

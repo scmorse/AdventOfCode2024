@@ -40,11 +40,11 @@ fun isProblemSolvablePart2(target: Long, accumulator: Long, subjects: List<Long>
   val nextSubjects = subjects.drop(1)
   if (isProblemSolvablePart2(target, accumulator * rightHandSide, nextSubjects)) return true
   if (isProblemSolvablePart2(target, accumulator + rightHandSide, nextSubjects)) return true
-  if (isProblemSolvablePart2(target, accumulator concatAsLong rightHandSide, nextSubjects)) return true
+  if (isProblemSolvablePart2(target, accumulator concatDigits rightHandSide, nextSubjects)) return true
   return false
 }
 
-infix fun Long.concatAsLong(other: Long): Long = (toString() + other.toString()).toLong()
+infix fun Long.concatDigits(other: Long): Long = (toString() + other.toString()).toLong()
 
 data class Problem(val target: Long, val subjects: List<Long>)
 

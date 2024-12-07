@@ -2,6 +2,7 @@ package day5
 
 import java.io.File
 
+// https://adventofcode.com/2024/day/5
 fun main() {
   val (rules: Set<Rule>, manuals: List<Manual>) = readInput()
 

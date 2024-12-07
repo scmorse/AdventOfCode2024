@@ -1,8 +1,8 @@
-package day7
+package day8
 
 import java.io.File
 
-// https://adventofcode.com/2024/day/7
+// https://adventofcode.com/2024/day/8
 fun main() {
   val input: List<String> = readInput()
 
@@ -12,6 +12,6 @@ fun main() {
 }
 
 private fun readInput(): List<String> {
-  return File("src/main/kotlin/day7/input.txt").readLines()
+  return File("src/main/kotlin/day8/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
 }

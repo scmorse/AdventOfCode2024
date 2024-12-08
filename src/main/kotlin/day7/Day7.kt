@@ -44,7 +44,7 @@ fun isProblemSolvablePart2(target: Long, accumulator: Long, subjects: List<Long>
   return false
 }
 
-infix fun Long.concatDigits(other: Long): Long = (toString() + other.toString()).toLong()
+infix fun Long.concatDigits(other: Long): Long = "$this$other".toLong()
 
 data class Problem(val target: Long, val subjects: List<Long>)
 

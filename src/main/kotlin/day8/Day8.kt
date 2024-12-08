@@ -30,22 +30,18 @@ fun main() {
   check(numAntinodeCoordinatesForPart1 == 357)
 
   // Part 2
+  tailrec fun MutableList<Coordinate>.addMultiplesInGrid(candidate: Coordinate, delta: Coordinate) {
+    if (candidate !in grid) return
+    add(candidate)
+    return addMultiplesInGrid(candidate = candidate + delta, delta)
+  }
+
   val numAntinodeCoordinatesForPart2 = antennasGroupedByType.values
     .flatMap { coordinates ->
       coordinates.pairs().flatMap { (antenna1, antenna2) ->
         buildList {
-          var delta = antenna1.coordinate - antenna2.coordinate
-          var candidate = antenna1.coordinate
-          while (candidate in grid) {
-            add(candidate)
-            candidate += delta
-          }
-          delta = antenna2.coordinate - antenna1.coordinate
-          candidate = antenna2.coordinate
-          while (candidate in grid) {
-            add(candidate)
-            candidate += delta
-          }
+          addMultiplesInGrid(candidate = antenna1.coordinate, antenna1.coordinate - antenna2.coordinate)
+          addMultiplesInGrid(candidate = antenna2.coordinate, antenna2.coordinate - antenna1.coordinate)
         }
       }
     }

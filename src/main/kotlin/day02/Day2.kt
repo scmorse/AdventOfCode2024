@@ -1,4 +1,4 @@
-package day2
+package day02
 
 import java.io.File
 
@@ -31,7 +31,7 @@ fun List<Long>.isSafeForPart1(): Boolean =
   }
 
 private fun readInput(): List<List<Long>> {
-  return File("src/main/kotlin/day2/input.txt").readLines()
+  return File("src/main/kotlin/day02/input.txt").readLines()
     .map { line ->
       line.split(" ").map { it.toLong() }
     }

@@ -1,4 +1,4 @@
-package day5
+package day05
 
 import java.io.File
 
@@ -44,7 +44,7 @@ fun Manual.midpoint(): Long = this[size / 2].toLong()
 private fun readInput(): Pair<Set<Rule>, List<Manual>> {
   val rules = mutableSetOf<Rule>()
   val manuals = mutableListOf<Manual>()
-  File("src/main/kotlin/day5/input.txt").readLines()
+  File("src/main/kotlin/day05/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
     .forEach { line ->
       if (line.contains("|")) {

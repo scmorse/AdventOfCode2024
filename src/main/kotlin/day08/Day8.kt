@@ -1,4 +1,4 @@
-package day8
+package day08
 
 import java.io.File
 
@@ -72,6 +72,6 @@ data class Point(val x: Int, val y: Int) {
 }
 
 private fun readInput(): List<String> {
-  return File("src/main/kotlin/day8/input.txt").readLines()
+  return File("src/main/kotlin/day08/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
 }

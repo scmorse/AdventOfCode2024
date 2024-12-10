@@ -1,4 +1,4 @@
-package day9
+package day09
 
 import java.io.File
 import java.util.*
@@ -179,5 +179,5 @@ fun <T> List<T>.forEachInReverse(action: (T) -> Unit) {
 }
 
 private fun readInput(): String {
-  return File("src/main/kotlin/day9/input.txt").readText().trim()
+  return File("src/main/kotlin/day09/input.txt").readText().trim()
 }

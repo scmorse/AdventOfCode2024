@@ -1,4 +1,4 @@
-package day3
+package day03
 
 import java.io.File
 
@@ -51,5 +51,5 @@ data class EnableMulCommand(override val range: IntRange) : RecognizedCommand()
 data class DisableMulCommand(override val range: IntRange) : RecognizedCommand()
 
 private fun readInput(): String {
-  return File("src/main/kotlin/day3/input.txt").readText()
+  return File("src/main/kotlin/day03/input.txt").readText()
 }

@@ -1,4 +1,4 @@
-package day1
+package day01
 
 import java.io.File
 import kotlin.math.abs
@@ -21,7 +21,7 @@ fun main() {
 }
 
 private fun readInput(): Pair<List<Long>, List<Long>> {
-  return File("src/main/kotlin/day1/input.txt").readLines()
+  return File("src/main/kotlin/day01/input.txt").readLines()
     .map { line ->
       val parts = line.split("   ").apply { require(size == 2) }
       parts.first().toLong() to parts.last().toLong()

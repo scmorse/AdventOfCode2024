@@ -1,4 +1,4 @@
-package day7
+package day07
 
 import java.io.File
 
@@ -49,7 +49,7 @@ infix fun Long.concatDigits(other: Long): Long = "$this$other".toLong()
 data class Problem(val target: Long, val subjects: List<Long>)
 
 private fun readInput(): List<Problem> {
-  return File("src/main/kotlin/day7/input.txt").readLines()
+  return File("src/main/kotlin/day07/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
     .map { line ->
       Problem(

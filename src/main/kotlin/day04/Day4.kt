@@ -1,4 +1,4 @@
-package day4
+package day04
 
 import java.io.File
 
@@ -69,7 +69,7 @@ private operator fun Direction.times(steps: Int) = Vector(direction = this, magn
 private operator fun Coordinate.plus(vector: Vector) = Coordinate(x = x + vector.x, y = y + vector.y)
 
 private fun readInput(): List<String> {
-  return File("src/main/kotlin/day4/input.txt").readLines()
+  return File("src/main/kotlin/day04/input.txt").readLines()
     .map { it.trim() }
     .filter { it.isNotBlank() }
 }

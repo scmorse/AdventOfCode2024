@@ -1,4 +1,4 @@
-package day6
+package day06
 
 import java.io.File
 
@@ -103,7 +103,7 @@ fun Direction.turnClockwise(): Direction =
 private operator fun Coordinate.plus(direction: Direction) = Coordinate(x = x + direction.x, y = y + direction.y)
 
 private fun readInput(): Pair<Coordinate, Grid> {
-  val lines = File("src/main/kotlin/day6/input.txt").readLines()
+  val lines = File("src/main/kotlin/day06/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
   val grid = Grid(lines)
   val start: Coordinate = lines.withIndex().firstNotNullOf { (lineNumber, line) ->

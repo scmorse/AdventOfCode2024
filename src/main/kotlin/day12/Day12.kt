@@ -9,7 +9,6 @@ fun main() {
   // Part 1
   val gardens: List<Set<Coordinate>> = findGardens(input)
   val totalPriceForPart1 = gardens.sumOf { it.area() * it.perimeter() }
-  println(totalPriceForPart1)
   println("Part 1 total price: $totalPriceForPart1")
   check(totalPriceForPart1 == 1415378L)
 

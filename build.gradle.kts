@@ -1,21 +1,22 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
+  kotlin("jvm") version "1.9.21"
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+  testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 tasks.test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(21)
+  jvmToolchain(21)
 }

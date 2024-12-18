@@ -29,7 +29,6 @@ fun main() {
     ConcurrentHashMap(bestPath.coordinates().associateWith { true })
 
   fun Coordinate.unMemoizedIsOnOneBestPath(): Boolean {
-    println("Analyzing $this")
     return List(4) { this }.zip(Direction.entries)
       .filter { (coordinate, direction) -> map[coordinate - direction] != '#' }
       .any { intermediateTarget ->
@@ -87,6 +86,11 @@ fun getBestPath(
   val (target, targetDirection) = targetCoordinateAndDirection
   val queue: PriorityQueue<Path> = PriorityQueue { a: Path, b: Path ->
     a.heuristicDistanceTo(targetCoordinateAndDirection) - b.heuristicDistanceTo(targetCoordinateAndDirection)
+    if (a.heuristicDistanceTo(targetCoordinateAndDirection) != b.heuristicDistanceTo(targetCoordinateAndDirection)) {
+      a.heuristicDistanceTo(targetCoordinateAndDirection) - b.heuristicDistanceTo(targetCoordinateAndDirection)
+    } else {
+      b.steps.size - a.steps.size
+    }
   }
   queue.add(
     Path(
@@ -123,7 +127,7 @@ fun getBestPath(
         is DirectionStep -> 1
         TurnLeft, TurnRight -> 1000
       }
-      if (addedScores[nextCoordinate to nextDirection]?.let { nextDistanceTraveled > it } == true) {
+      if (addedScores[nextCoordinate to nextDirection]?.let { nextDistanceTraveled >= it } == true) {
         // We've found path that arrives at the same coordinate heading in the same direction with less cost
         continue
       }

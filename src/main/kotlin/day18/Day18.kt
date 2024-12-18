@@ -1,31 +1,33 @@
 package day18
 
+import arrow.core.memoize
 import java.io.File
 import java.util.*
 import kotlin.math.abs
 
 // https://adventofcode.com/2024/day/18
 fun main() {
-  val (start, target, corruptedMemoryCoordinates) = readInput()
+  val (start: Coordinate, target: Coordinate, corruptedMemoryCoordinates: List<Coordinate>) = readInput()
 
   // Part 1
   val bestPathFor1024 = getBestPath(start, target, corruptedMemoryCoordinates.take(1024).toMap())!!
-  println("Part 1 min steps: ${bestPathFor1024.steps.size}")
+  println("Part 1 min steps to solve maze with 1024 corrupted coordinates: ${bestPathFor1024.steps.size}")
   check(bestPathFor1024.steps.size == 380)
 
-
   // Part 2
-  // I know binary search would be faster, but this didn't take very long anyway.
-  var firstCoordinateThatMakesMazeUnsolvable: Coordinate? = null
-  for (num in 1..corruptedMemoryCoordinates.size) {
-    val coordinates = corruptedMemoryCoordinates.take(num)
-    val bestPath = getBestPath(start, target, coordinates.toMap())
-    if (bestPath == null) {
-      firstCoordinateThatMakesMazeUnsolvable = coordinates.last()
-      break
+  val getBestPathMemoized: (Int) -> Path? = { numCorruptedCoordinates: Int ->
+    getBestPath(start, target, corruptedMemoryCoordinates.take(numCorruptedCoordinates).toMap())
+  }.memoize()
+  val firstCoordinateThatMakesMazeUnsolvable: Coordinate = (1..corruptedMemoryCoordinates.size).toList()
+    .binarySearch { numCorruptedCoordinates ->
+      when {
+        getBestPathMemoized(numCorruptedCoordinates) != null -> -1
+        getBestPathMemoized(numCorruptedCoordinates - 1) == null -> 1
+        else -> 0
+      }
     }
-  }
-  println("Part 2 first coordinate that makes the maze unsolvable $firstCoordinateThatMakesMazeUnsolvable")
+    .let { corruptedMemoryCoordinates[it] }
+  println("Part 2 first coordinate that makes the maze unsolvable: $firstCoordinateThatMakesMazeUnsolvable")
   check(firstCoordinateThatMakesMazeUnsolvable == Coordinate(x = 26, y = 50))
 }
 
@@ -68,9 +70,7 @@ fun getBestPath(
       return search
     }
 
-    val possibleNextSteps = Direction.entries.filter { map[search.coordinate + it] == '.' }
-
-    for (direction in possibleNextSteps) {
+    for (direction in Direction.entries.filter { map[search.coordinate + it] == '.' }) {
       val nextCoordinate = search.coordinate + direction
       val nextDistanceTraveled = search.steps.size + 1
       if (addedScores[nextCoordinate]?.let { nextDistanceTraveled >= it } == true) {

@@ -5,31 +5,32 @@ import kotlin.math.abs
 
 // https://adventofcode.com/2024/day/20
 fun main() {
-  val (target: Coordinate, map: Map<Coordinate, Char>) = readInput()
+  val (start: Coordinate, target: Coordinate, map: Map<Coordinate, Char>) = readInput()
   val bestDistancesToTarget: Map<Coordinate, Int> = getBestDistancesTo(target, map)
-  val startCheatCoordinates = map.entries.filter { (_, char) -> char != '#' }.map { it.key }
+  val bestDistancesToStart: Map<Coordinate, Int> = getBestDistancesTo(start, map)
 
   // Part 1
   val numCheatsSavingAtLeast100Picoseconds =
-    startCheatCoordinates
+    bestDistancesToStart.keys
       .flatMap { startCheat ->
         startCheat.pairedWithEachValidEndCheatCoordinate(map, maxDistance = 2)
       }
       .count { (startCheat, endCheat) ->
-        getCheatSavings(startCheat, endCheat, bestDistancesToTarget) >= 100
+        getCheatSavings(start, startCheat, endCheat, bestDistancesToStart, bestDistancesToTarget) >= 100
       }
   println("Part 1 num cheats saving at least 100 picoseconds: $numCheatsSavingAtLeast100Picoseconds")
   check(numCheatsSavingAtLeast100Picoseconds == 1499)
 
   // Part 2
   val numLongRangeCheatsSavingAtLeast100Picoseconds =
-    startCheatCoordinates
+    bestDistancesToStart.keys
       .flatMap { startCheat ->
         startCheat.pairedWithEachValidEndCheatCoordinate(map, maxDistance = 20)
       }
       .count { (startCheat, endCheat) ->
-        getCheatSavings(startCheat, endCheat, bestDistancesToTarget) >= 100
+        getCheatSavings(start, startCheat, endCheat, bestDistancesToStart, bestDistancesToTarget) >= 100
       }
+
   println("Part 2 num long-range cheats saving at least 100 picoseconds: $numLongRangeCheatsSavingAtLeast100Picoseconds")
   check(numLongRangeCheatsSavingAtLeast100Picoseconds == 1027164)
 }
@@ -70,13 +71,16 @@ fun Coordinate.pairedWithEachValidEndCheatCoordinate(
   }
 
 fun getCheatSavings(
+  start: Coordinate,
   startCheat: Coordinate,
   endCheat: Coordinate,
+  bestDistancesToStart: Map<Coordinate, Int>,
   bestDistancesToTarget: Map<Coordinate, Int>,
 ): Int {
-  val distToTarget = bestDistancesToTarget[startCheat]!!
-  val distToTargetWithCheat = startCheat.distanceTo(endCheat) + bestDistancesToTarget[endCheat]!!
-  return distToTarget - distToTargetWithCheat
+  val distWithoutCheat = bestDistancesToTarget[start]!!
+  val distWithCheat =
+    bestDistancesToStart[startCheat]!! + startCheat.distanceTo(endCheat) + bestDistancesToTarget[endCheat]!!
+  return distWithoutCheat - distWithCheat
 }
 
 data class Coordinate(val x: Int, val y: Int) {
@@ -92,18 +96,20 @@ enum class Direction(val x: Int, val y: Int) {
   W(x = -1, y = 0)
 }
 
-private fun readInput(): Pair<Coordinate, Map<Coordinate, Char>> {
+private fun readInput(): Triple<Coordinate, Coordinate, Map<Coordinate, Char>> {
   val lines = File("src/main/kotlin/day20/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
 
+  lateinit var start: Coordinate
   lateinit var target: Coordinate
   val map: Map<Coordinate, Char> = buildMap {
     lines.forEachIndexed { y, line ->
       line.forEachIndexed { x, char ->
+        if (char == 'S') start = Coordinate(x, y)
         if (char == 'E') target = Coordinate(x, y)
         this@buildMap.put(Coordinate(x, y), char)
       }
     }
   }
-  return Pair(target, map)
+  return Triple(start, target, map)
 }

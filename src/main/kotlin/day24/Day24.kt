@@ -76,14 +76,23 @@ fun correlateAndCountMatches(
     }
   }
 
+  val correctEquationsByOut: Map<String, List<Equation>> = correctEquations.groupBy { it.out }
+  val correctEquationsByInput: Map<String, List<Equation>> =
+    correctEquations.flatMap { ce -> ce.inputs.map { input -> input to ce } }
+      .groupBy { it.first }.mapValues { (_, v) -> v.map { it.second } }
+
   while (true) {
     val sizeAtStart = mapping.size
 
     equations.forEach { equation ->
       val (knownInputs, unknownInputs) = equation.inputs.partition { it in mapping }
       val (knownOutputs, unknownOutputs) = listOf(equation.out).partition { it in mapping }
-      if ((unknownInputs + unknownOutputs).size == 1) {
-        val correctEquationMatches = correctEquations.filter { ce ->
+      if (unknownInputs.size + unknownOutputs.size == 1) {
+        val correctEquationMatches = if (knownOutputs.isNotEmpty()) {
+          correctEquationsByOut[mapping[knownOutputs.first()]]
+        } else {
+          knownInputs.firstNotNullOfOrNull { correctEquationsByInput[mapping[it]] }
+        }!!.filter { ce ->
           ce.op == equation.op && knownInputs.all { mapping[it] in ce.inputs } && knownOutputs.all { mapping[it] == ce.out }
         }
         if (correctEquationMatches.size == 1) {
@@ -132,14 +141,16 @@ fun evaluateEquations(
   val gates = input.toMutableMap()
 
   while (true) {
-    val eq = equations.find {
+    val unknownOutputs = equations.filter {
       gates[it.left] != null && gates[it.right] != null && gates[it.out] == null
-    } ?: break
-
-    gates[eq.out] = when (eq.op) {
-      Op.XOR -> gates[eq.left]!! xor gates[eq.right]!!
-      Op.OR -> gates[eq.left]!! or gates[eq.right]!!
-      Op.AND -> gates[eq.left]!! and gates[eq.right]!!
+    }
+    if (unknownOutputs.isEmpty()) break
+    for (eq in unknownOutputs) {
+      gates[eq.out] = when (eq.op) {
+        Op.XOR -> gates[eq.left]!! xor gates[eq.right]!!
+        Op.OR -> gates[eq.left]!! or gates[eq.right]!!
+        Op.AND -> gates[eq.left]!! and gates[eq.right]!!
+      }
     }
   }
 

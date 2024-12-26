@@ -173,7 +173,7 @@ enum class Op {
   AND,
 }
 
-private fun readInput(filename: String = "input.txt"): List<String> {
-  return File("src/main/kotlin/day24/$filename").readLines()
+private fun readInput(): List<String> {
+  return File("src/main/kotlin/day24/input.txt").readLines()
     .mapNotNull { it.trim().ifBlank { null } }
 }
